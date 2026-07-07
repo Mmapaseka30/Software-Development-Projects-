@@ -1,0 +1,225 @@
+import json
+
+FILE_NAME = "students.json"
+
+
+def load_students():
+    try:
+        with open(FILE_NAME, "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+
+
+def save_students(students):
+    with open(FILE_NAME, "w") as file:
+        json.dump(students, file, indent=4)
+
+
+def get_grade(mark):
+    if mark >= 80:
+        return "A"
+    elif mark >= 70:
+        return "B"
+    elif mark >= 60:
+        return "C"
+    elif mark >= 50:
+        return "D"
+    return "F"
+
+
+def add_student(students):
+    name = input("Student name: ").strip()
+
+    if name in students:
+        print("Student already exists.")
+        return
+
+    try:
+        mark = float(input("Mark (0-100): "))
+
+        if mark < 0 or mark > 100:
+            print("Mark must be between 0 and 100.")
+            return
+
+        students[name] = mark
+        save_students(students)
+
+        print("Student added successfully.")
+
+    except ValueError:
+        print("Please enter a valid number.")
+
+
+def view_students(students):
+    if not students:
+        print("No students found.")
+        return
+
+    print("\n--- STUDENTS ---")
+
+    for name, mark in students.items():
+        print(
+            f"Name: {name} | "
+            f"Mark: {mark} | "
+            f"Grade: {get_grade(mark)}"
+        )
+
+
+def search_student(students):
+    name = input("Enter student name: ").strip()
+
+    if name in students:
+        mark = students[name]
+
+        print(f"\nName: {name}")
+        print(f"Mark: {mark}")
+        print(f"Grade: {get_grade(mark)}")
+
+    else:
+        print("Student not found.")
+
+
+def update_mark(students):
+    name = input("Student name: ").strip()
+
+    if name not in students:
+        print("Student not found.")
+        return
+
+    try:
+        new_mark = float(input("New mark: "))
+
+        if new_mark < 0 or new_mark > 100:
+            print("Mark must be between 0 and 100.")
+            return
+
+        students[name] = new_mark
+        save_students(students)
+
+        print("Mark updated.")
+
+    except ValueError:
+        print("Invalid input.")
+
+
+def delete_student(students):
+    name = input("Student name: ").strip()
+
+    if name in students:
+        del students[name]
+        save_students(students)
+        print("Student removed.")
+    else:
+        print("Student not found.")
+
+
+def class_average(students):
+    if not students:
+        print("No students available.")
+        return
+
+    average = sum(students.values()) / len(students)
+
+    print(f"Class Average: {average:.2f}")
+
+
+def top_student(students):
+    if not students:
+        print("No students available.")
+        return
+
+    name = max(students, key=students.get)
+
+    print(f"Top Student: {name}")
+    print(f"Mark: {students[name]}")
+
+
+def sort_students(students):
+    if not students:
+        print("No students available.")
+        return
+
+    sorted_students = sorted(
+        students.items(),
+        key=lambda item: item[1],
+        reverse=True
+    )
+
+    print("\n--- RANKINGS ---")
+
+    for position, (name, mark) in enumerate(sorted_students, start=1):
+        print(
+            f"{position}. {name} - "
+            f"{mark} ({get_grade(mark)})"
+        )
+
+
+def statistics(students):
+    if not students:
+        print("No students available.")
+        return
+
+    marks = list(students.values())
+
+    print("\n--- STATISTICS ---")
+    print(f"Total Students: {len(marks)}")
+    print(f"Highest Mark: {max(marks)}")
+    print(f"Lowest Mark: {min(marks)}")
+    print(f"Average Mark: {sum(marks)/len(marks):.2f}")
+
+
+def menu():
+    students = load_students()
+
+    while True:
+        print("\n===== STUDENT GRADE MANAGER PRO =====")
+        print("1. Add Student")
+        print("2. View Students")
+        print("3. Search Student")
+        print("4. Update Mark")
+        print("5. Delete Student")
+        print("6. Class Average")
+        print("7. Top Student")
+        print("8. Sort Students")
+        print("9. Statistics")
+        print("10. Exit")
+
+        choice = input("Select option: ")
+
+        if choice == "1":
+            add_student(students)
+
+        elif choice == "2":
+            view_students(students)
+
+        elif choice == "3":
+            search_student(students)
+
+        elif choice == "4":
+            update_mark(students)
+
+        elif choice == "5":
+            delete_student(students)
+
+        elif choice == "6":
+            class_average(students)
+
+        elif choice == "7":
+            top_student(students)
+
+        elif choice == "8":
+            sort_students(students)
+
+        elif choice == "9":
+            statistics(students)
+
+        elif choice == "10":
+            print("Goodbye!")
+            break
+
+        else:
+            print("Invalid option.")
+
+
+menu()
