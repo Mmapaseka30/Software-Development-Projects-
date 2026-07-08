@@ -97,5 +97,5 @@ Potential enhancements include:
 * Database integration with SQLite
 
 ## Author
-Mmapaseka Kgaka
+[Mmapaseka Kgaka]
 Developed as a Python portfolio project to practice programming fundamentals and demonstrate software development skills.
